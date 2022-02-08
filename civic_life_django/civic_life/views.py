@@ -11,6 +11,11 @@ class UserList(generics.ListCreateAPIView):
     serializer_class = UserSerializer
 
 
+class UserDetail(generics.RetrieveUpdateDestroyAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+
 class LegislationList(generics.ListCreateAPIView):
     queryset = Legislation.objects.all()
     serializer_class = LegislationSerializer
