@@ -1,3 +1,7 @@
+
+import os
+import dj_database_url
+
 """
 Django settings for civic_life_django project.
 
@@ -19,13 +23,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ev4*$ni)&n%wty$7=^f8pzw4zn9l-nloy3l6)qg0uptfpquxo$'
+SECRET_KEY = os.environ['SECRET_KEY']
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True if os.environ['MODE'] == 'dev' else False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -43,9 +47,11 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",
+
     'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -66,7 +72,10 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:8080",
     "http://localhost:8000",
     "http://127.0.0.1:9000",
-    "https://civicinfo.googleapis.com"
+    "https://civicinfo.googleapis.com",
+    "https://example.com",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000"
 ]
 
 
@@ -119,16 +128,19 @@ WSGI_APPLICATION = 'civic_life_django.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'civic_life',
-        'USER': 'civic_user',
-        'PASSWORD': 'civic',
-        'HOST': 'localhost'
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'civic_life',
+#         'USER': 'civic_user',
+#         'PASSWORD': 'civic',
+#         'HOST': 'localhost'
+#     }
+# }
 
+DATABASES = {
+    'default': dj_database_url.config(conn_max_age=600)
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -178,3 +190,5 @@ REST_FRAMEWORK = {
         'rest_framework.permissions.AllowAny',
     ]
 }
+
+STATIC_ROOT = os.path.join(BASE_DIR, "static/")
